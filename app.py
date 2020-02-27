@@ -188,8 +188,8 @@ def settings():
         db.session.commit()
         flash('设置name成功')
         return redirect(url_for('index'))
-        
-    return render_template("settinds.html")
+
+    return render_template("settings.html")
 
 
 # 用户登录 flask提供的login_user()函数
