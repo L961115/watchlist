@@ -1,4 +1,4 @@
-{% entends 'base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
 
@@ -6,7 +6,7 @@
     <li>
         404 - 页面跑丢了
         <span>
-            <a href="{{ urr_for('index') }}"></a>
+            <a href="{{ url_for('index') }}"></a>
         </span>
     </li>
 </ul>

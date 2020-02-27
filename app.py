@@ -2,7 +2,7 @@ import os
 import sys
 import click
 
-from flask import Flask,render_template
+from flask import Flask,render_template,request,url_for,redirect,flash
 from flask_sqlalchemy import SQLAlchemy
 # from flask_login import LoginManager,UserMixin,login_user,
 
@@ -10,13 +10,14 @@ app = Flask(__name__)
 
 WIN = sys.platform.startswith('win')
 if WIN:
-    prifix = 'sqlite:///' # 如果是Windows系统
+    prefix = 'sqlite:///' # 如果是Windows系统
 else:
-    prifix = 'sqlite:////' # Mac,Linux
+    prefix = 'sqlite:////' # Mac,Linux
 
 #flask配置：Flask.config字典（写入配置的语句一般会放到扩展类实例化之前）
-app.config['SQLALCHEMY_DATABASE_URI'] = prifix + os.path.join(app.root_path,'data.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = prefix + os.path.join(app.root_path,'data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # 关闭对模型修改的监控
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY','dev')
 
 db = SQLAlchemy(app)
 
@@ -68,6 +69,7 @@ def forge():
     click.echo('数据导入完成')
 
 
+
 # 生成admin账号的函数
 # @app.cli.command()
 # @click.option('--username',prompt=True,help="用来登录的用户名")
@@ -95,17 +97,36 @@ def forge():
 # login_manager
 
 #首页
-@app.route('/index')
+@app.route('/',methods=['GET','POST'])
 def index():
-    user = User.query.first()
-    movies = Movie.query.all()
-    
-    return render_template('index.html',user=user,movies=movies) #render_template渲染html
+    if request.method == "POST":
+        #获取表单数据
+        title = request.form.get('title')
+        year = request.form.get('year')
+
+        #验证title不为空且不大于60，year不大于4
+        if not title or not year or len(title)>60 or len(year)>4:
+            flash("输入错误")
+            return redirect(url_for('index')) #重定向会首页
+
+        movie = Movie(title=title,year=year)  #创建记录
+        db.session.add(movie) #添加到数据库会话
+        db.session.commit()  #提交数据库会话
+        flash('数据创建成功')
+        return redirect(url_for('index'))
+
+    movies = Movie.query.all()   
+    return render_template('index.html',movies=movies) #render_template渲染html
 
 @app.errorhandler(404) #传入要处理的错误代码
 def page_not_found(e):
+    return render_template('404.html'),404
+
+@app.context_processor # 模板上下文处理函数
+def inject_user():
     user = User.query.first()
-    return render_template('404.html',user=user),404
+    return dict(user=user)
+
 
 # @app.route('/settings',methods=['POST','GET'])
 # @login_required

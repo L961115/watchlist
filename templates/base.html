@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     {% block head %}
     <meta charset="UTF-8">
@@ -7,9 +8,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     {# 网页图标设置 #}
     <link rel="shortcut icon" href="{{ url_for('static',filename='favicon.ico') }}" type="image/x-icon">
-    {# 页面css静态设置 #}
     <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
-    <title>{{ user.name }}'s WatchList</title>
+    <title>{{ user.name }}'s 博客</title>
     {% endblock %}
 </head>
 <body>
