@@ -5,7 +5,7 @@ import click
 from flask import Flask,render_template,request,url_for,redirect,flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash,check_password_hash 
-from flask_login import LoginManager,UserMixin,login_user,logout_user
+from flask_login import LoginManager,UserMixin,login_user,logout_user,login_required,current_user
 
 app = Flask(__name__)
 
@@ -103,6 +103,8 @@ def load_user(user_id):   # 创建用户加载回调函数，接受用户ID作�
     user = User.query.get(int(user_id))
     return user
 
+# LoginManager.login_view = 'login'
+
 # # 设置
 # login_manager
 
@@ -110,6 +112,8 @@ def load_user(user_id):   # 创建用户加载回调函数，接受用户ID作�
 @app.route('/',methods=['GET','POST'])
 def index():
     if request.method == "POST":
+        if not current_user.is_authenticated:
+            return redirect(url_for('index'))
         #获取表单数据
         title = request.form.get('title')
         year = request.form.get('year')
@@ -130,7 +134,7 @@ def index():
 
 #编辑电影信息页面
 @app.route('/movie/edit/<int:movie_id>',methods=['POST','GET'])
-
+@login_required
 def edit(movie_id):
     movie = Movie.query.get_or_404(movie_id)
 
@@ -151,6 +155,7 @@ def edit(movie_id):
 
 #删除信息
 @app.route('/movie/edit/<int:movie_id>',methods=['POST'])
+@login_required  # 认证保护
 def delete(movie_id):
     movie = Movie.query.get_or_404(movie_id)
     db.session.delete(movie)
@@ -168,20 +173,24 @@ def inject_user():
     user = User.query.first()
     return dict(user=user)
 
+# 设置页面
+@app.route('/settings',methods=['POST','GET'])
+@login_required
+def settings():
+    if request.method =='POST':
+        name = request.form['name']
 
-# @app.route('/settings',methods=['POST','GET'])
-# @login_required
-# def settings():
-#     if request.method =='POST':
-#         name = request.form['name']
+        if not name or len(name)>20:
+            flash('输入错误')
+            return redirect(url_for('settings'))
 
-#         if not name or len(name)>20:
-#             flash('输入错误')
-#             return redirect(url_for('settings'))
+        current_user.name = name
+        db.session.commit()
+        flash('设置name成功')
+        return redirect(url_for('index'))
+        
+    return render_template("settinds.html")
 
-#         current_user.name = name
-#         db.session.commit()
-#         flash('')
 
 # 用户登录 flask提供的login_user()函数
 @app.route('/login',methods=['GET','POST'])
@@ -203,9 +212,9 @@ def login():
     return render_template('login.html')
 
 # 用户登出
-# @app.route('/logout')
-# def logout():
-#     logout_user()
-#     flash('退出登录')
-#     return redirect(url_for('index'))
+@app.route('/logout')
+def logout():
+    logout_user()
+    flash('退出登录')
+    return redirect(url_for('index'))
 
