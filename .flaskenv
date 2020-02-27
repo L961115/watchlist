@@ -1,1 +1,2 @@
 FLASK_ENV=development
+FLASE_APP=watchlist
