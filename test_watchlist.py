@@ -69,7 +69,11 @@ class WatchlistTestCase(unittest.TestCase):
         response = self.client.post('/movie/delete/1',follow_redirects=True)
         data =response.get_data(as_text=True)
         self.assertIn('删除数据成功',data)
+    # 测试编辑
+    def test_edit_item(self):
+        self.test_login()
 
+        pass
 
 if __name__ == "__main__":
     unittest.main()
