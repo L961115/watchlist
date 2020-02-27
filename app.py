@@ -95,13 +95,15 @@ def forge():
 # login_manager
 
 #首页
-@app.route('/')
+@app.route('/index')
 def index():
     user = User.query.first()
     movies = Movie.query.all()
     
     return render_template('index.html',user=user,movies=movies) #render_template渲染html
 
+@app.error_handler(404) #传入要处理的错误代码
+def
 # @app.route('/settings',methods=['POST','GET'])
 # @login_required
 # def settings():
