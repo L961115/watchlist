@@ -1,32 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    {# 网页图标设置 #}
-    <link rel="shortcut icon" href="{{ url_for('static',filename='favicon.ico') }}" type="image/x-icon">
-    {# 页面css静态设置 #}
-    <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
-    <title>{{ name }}'s WatchList</title>
-</head>
-<body>
-    <h2>
-        <img src="{{ url_for('static',filename='images/1.png') }}" alt="头像">
-        {{ name }}'s WatchList
-    </h2>
-    {# 使用length过滤器获取movies变量的长度 #}
-    <p>{{ movies|length }} Titles</p >
-    <ul>
-        {% for movie in movies %}
-        <li>{{ movie.title }} - {{ movie.year }}</li>
-        {% endfor %}
-    </ul>
+{% extends 'base.html' %}
 
-    <footer>
-        <small>&copy; 2020 <a href="http://www.bwzn.com">北京网络职业技术学院-人工智能学科</a></small>
-    </footer>
+{% block content %}
+{# 使用length过滤器获取movies变量的长度 #}
+<p>{{ movies|length }} Titles</p>
+<ul class="movie-list">
+    {% for movie in movies %}
+    <li>
+        {{ movie.title }} - {{ movie.year }}
+        <span class="float-right">
+            <a class="vbd"
+                href="http://v.baidu.com/v?word={{ movie.title }}&ct=301989888&rn=67&pn=0&db=0&s=0&fbl=800&ie=utf-8&oq=nnkd&f=3&rsp=0"
+                target="_blank" title="在百度视频中查找此电影">百度视频</a>
+        </span>
+    </li>
+    {% endfor %}
+</ul>
 
-    <img src="{{ url_for('static',filename='images/2.jpg') }}" alt="">
-</body>
-</html>
+<img class='footimg' src="{{ url_for('static',filename='images/2.jpg') }}" alt="">
+{% endblock %}

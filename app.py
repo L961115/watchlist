@@ -102,8 +102,11 @@ def index():
     
     return render_template('index.html',user=user,movies=movies) #render_template渲染html
 
-@app.error_handler(404) #传入要处理的错误代码
-def
+@app.errorhandler(404) #传入要处理的错误代码
+def page_not_found(e):
+    user = User.query.first()
+    return render_template('404.html',user=user),404
+
 # @app.route('/settings',methods=['POST','GET'])
 # @login_required
 # def settings():
