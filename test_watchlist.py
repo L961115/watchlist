@@ -1,7 +1,8 @@
 #测试文件
 import unittest
 
-from app import app,db,Movie,User
+from watchlist import app,db
+from watchlist.models import User,Movie
 
 class WatchlistTestCase(unittest.TestCase):
     # 测试固件，每个测试方法之前执行
@@ -14,7 +15,7 @@ class WatchlistTestCase(unittest.TestCase):
         #创建数据库和表
         db.create_all()
         #创建测试数据，一个用户，一个电影信息
-        user = User(name='测试',username='test')
+        user = User(name='Test',username='test')
         user.set_password('123456')
         movie = Movie(title="测试电影名称",year='2020')
         db.session.add_all([user,movie])
