@@ -5,7 +5,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 
-from watchlist import views,errors,commands
 
 # 所有的初始化
 app = Flask(__name__)
@@ -40,3 +39,4 @@ def inject_user():
     user = User.query.first()
     return dict(user=user)
 
+from watchlist import views,errors,commands
